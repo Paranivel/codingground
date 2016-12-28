@@ -6,7 +6,7 @@ public class CreateCustomerDB
    static final String USER = "root";
    static final String PASS = "root";
    
-   public static void main(String[] args) {
+   public static void main(String[] args) throws Exception {
       Connection conn = null;
       Statement st = null;
 
@@ -16,9 +16,10 @@ public class CreateCustomerDB
       conn = DriverManager.getConnection(DB_URL,USER,PASS);
       st = conn.createStatement();
       st.executeQuery("Create table customertable(customeridtab int,customernametab varchar(50),dobtab date,balancetab decimal(10,2))");
+      conn.close();
    }
-   catch(Exception e){
-       System.out.println("Error While creating CustomerDB" + e);
+   catch(SQLException e){
+       System.out.println("Error While creating CustomerDB" + e.getMessage());
    }
  }
 }
