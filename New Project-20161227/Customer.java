@@ -1,55 +1,65 @@
 import java.sql.*;
+import java.util.*;
 public class Customer
 {
-    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    static final String URL = "jdbc:mysql://localhost/CODINGGROUND";
-    static final String USER = "root";
-    static final String PWD = "root";
-    
-    int customer_id;
-    String customer_name , dob;
-    float balance=20;
-    public static void main(String args[])
-    {
+   static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
+   static final String DB_URL = "jdbc:mysql://localhost/CODINGGROUND";
+   static final String USER = "root";
+   static final String PASS = "root";
+   
+   int customerid;
+   String customername , dob;
+   float balance=20;
+   public static void main(String[] args) {
       Connection conn = null;
       Statement stmt = null;
-      try
+
+   try{
+      Customer custobj = new Customer();
+      Class.forName("com.mysql.jdbc.Driver");
+      System.out.println("Connecting to database...");
+      conn = DriverManager.getConnection(DB_URL,USER,PASS);
+   
+   // Finding a customer 
+      PreparedStatement psf = conn.prepareStatement("Select customeridtab,customernametab,dobtab,balancetab from customertable where customeridtab = ? ");
+      psf.setInt(1,custobj.customerid);
+      psf.executeQuery();
+      
+   // Updating a customer
+      PreparedStatement psu = conn.prepareStatement("Update customertable set customernametab = ? ,dobtab = ? ,balancetab = ?  where customeridtab = ? ");
+      psu.setString(1,custobj.customername);
+      psu.setString(2,custobj.dob);
+      psu.setFloat(3,custobj.balance);
+      psu.setInt(4,custobj.customerid);
+      psu.executeUpdate();
+      
+   // Inserting a customer
+      PreparedStatement psi = conn.prepareStatement("Insert into table customertable values (?,?,?,?)");
+      psi.setString(1,custobj.customername);
+      psi.setString(2,custobj.dob);
+      psi.setFloat(3,custobj.balance);
+      psi.setInt(4,custobj.customerid);
+      psi.executeUpdate();
+      
+   // Deleting a customer
+      PreparedStatement psd = conn.prepareStatement("Delete from customertable where customeridtab =? ");
+      psd.setInt(1,custobj.customerid);
+      psd.executeUpdate();
+      
+   // Selecting ALL customer (Not yet defined properly)
+      stmt = conn.createStatement();
+      ResultSet rs = stmt.executeQuery("Select customeridtab,customernametab,dobtab,balancetab from customertable");
+      ArrayList<String> al = new ArrayList<String>();
+      while (rs.next())
       {
-        Customer custobj = new Customer(); 
-        System.out.println("Program executed " +  custobj.balance);
-        Class.forName("com.mysql.jdbc.Driver");
-        conn = DriverManager.getConection(URL,USER,PWD);
-        Boolean add_result = custobj.addCustomer(custobj);
-        if (add_result)
-        {
-          System.out.println("Customer is Added");
-          
-        }
-          
+          new Customer();
+          al.add("custobj");
+      }
       }
       catch(Exception e)
       {
         System.out.println("Error in Creating Connection " + e);
       }  
     }
-  public boolean addCustomer(Customer custobj)
-  {
-    try
-    {
-      System.out.println("Customer is created");
-      return true;
-    }
-    catch(Exception e)
-    {
-       System.out.println("Error in ADDING CUSTOMER " + e);
-    }
-  }
-  public Customer findCustomer(int customerid)
-  {
-      Customer custobj = new Customer();
-      PreparedStatement ps = conn.prepareStatement("Select customeridtab,customernametab,dobtab,balancetab from customertable where customeridtab = ? ");
-      ps.setInt(1,customerid);
-      ps.executeQuery();
-      return custobj;
-  }
+  
 }
